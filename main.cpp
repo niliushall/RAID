@@ -78,7 +78,11 @@ int randomCheck(Client *c, int checktime, int hung_disk_num)
 
 int main()
 {
-    int level = 0;
+    cout << "hhhh!!!" << endl;
+
+
+
+    /*int level = 0;
     RamDisk disk[10];
     disk[0].initDisk(10240);
     disk[1].initDisk(10240);
@@ -88,7 +92,8 @@ int main()
     //cout<<"please select the level of RAID(0, 1, 5 or 6):"<<endl;
     cout<<"the level of RAID is 6:"<<endl;
     //cin>>level;
-    /*switch(level)
+
+    switch(level)
     {
     case 0:
         {r=(RAID0 *)new RAID0;break;}
@@ -101,7 +106,8 @@ int main()
     default:
         {cout<<"the level of RAID is not exist!"<<endl;
         return 0;}
-    }*/
+    }
+
     r=(RAID6 *)new RAID6;
     (*r).addDisk(&disk[0]);
     (*r).addDisk(&disk[1]);
@@ -126,5 +132,5 @@ int main()
     randomCheck(&c, 5, 2);
 
     system("pause");
-    return 0;
+    return 0;*/
 }
