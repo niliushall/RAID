@@ -1,9 +1,5 @@
-//
-// Created by Administrator on 2015/12/9.
-//
-
-#ifndef SIMRAID_RAID5_H
-#define SIMRAID_RAID5_H
+#ifndef RAID5_H
+#define RAID5_H
 
 #include "RAID.h"
 #include <algorithm>

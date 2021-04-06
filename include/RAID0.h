@@ -23,10 +23,6 @@ class RAID0 : public RAID
 
         size_t operate(int offset, void *buf, size_t count,int opflag);
         size_t operatedisk(int diskno,int offset, void *buf, size_t count,int opflag);
-
-
-
-    private:
 };
 
 #endif // RAID0_H

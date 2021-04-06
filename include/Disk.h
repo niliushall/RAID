@@ -5,10 +5,7 @@
 #include "RAID.h"
 
 #define DISK_SIZE 10240
-//enum DISKSTATE
-//{
-// STARTFLAG,NOTREADY, READY, FAILED, HUNG,ENDFLAG
-//};
+
 #define DISKSTATE_STARTFLAG       0    /*had not alloc the memery */
 #define DISKSTATE_NOTREADY        1   /*had alloc the memery */
 #define DISKSTATE_READY           2

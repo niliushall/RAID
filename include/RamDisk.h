@@ -9,7 +9,7 @@ class RamDisk : public Disk
     public:
         RamDisk();
         virtual ~RamDisk();
-        virtual int initDisk(int capacity);
+        virtual int initDisk(int capacity = DISK_SIZE);
         virtual size_t read(int offset, void *buf, size_t count);
         virtual size_t write(int offset, void *buf, size_t count);
         virtual bool emptyDisk();

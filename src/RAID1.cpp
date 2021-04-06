@@ -79,7 +79,7 @@ int RAID1::addressMapping(int offset, size_t len)
 
     int disknum=disklist.size()/2;
 
-    int slideno=offset/slidesize; //the no of slide, start from 0 ²ã
+    int slideno=offset/slidesize; //the no of slide, start from 0 ï¿½ï¿½
     int offset1=slideno/disknum*slidesize+offset%slidesize;
 
     diskaddr.diskno=(slideno%disknum)*2;
@@ -108,11 +108,11 @@ int RAID1::addressMapping(int offset, size_t len)
 
         while(towrite>0)
         {
-            diskaddr.diskno=((++slideno)%disknum)*2;//Ð´´ÅÅÌÏÂÒ»¿é
+            diskaddr.diskno=((++slideno)%disknum)*2;//Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
             diskaddr_copy.diskno=diskaddr.diskno+1;
-            diskaddr.offset=slideno/disknum*slidesize;//´ÅÅÌµÄÆ«ÒÆÁ¿
+            diskaddr.offset=slideno/disknum*slidesize;//ï¿½ï¿½ï¿½Ìµï¿½Æ«ï¿½ï¿½ï¿½ï¿½
             diskaddr_copy.offset=diskaddr.offset;
-            if (towrite<slidesize)//Ð´Êý¾Ýµ½Ð´×îºóÒ»¿é£¨ÓÐÊ£Óà£©
+            if (towrite<slidesize)//Ð´ï¿½ï¿½ï¿½Ýµï¿½Ð´ï¿½ï¿½ï¿½Ò»ï¿½é£¨ï¿½ï¿½Ê£ï¿½à£©
             {
                diskaddr.len=towrite;
                diskaddr_copy.len=towrite;
@@ -140,7 +140,7 @@ int RAID1::addressMapping(int offset, size_t len)
     }
 
 
-    return diskaddrlist.size(); //Ð´ÁË¶àÉÙ¿éÊý¾Ý£¬²»°üº¬±¸·ÝÊý¾Ý
+    return diskaddrlist.size(); //Ð´ï¿½Ë¶ï¿½ï¿½Ù¿ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }
 
 Disk *RAID1::getDisk(int diskno)
@@ -163,7 +163,7 @@ size_t RAID1::operatedisk(int diskno,int offset, void *buf, size_t count,int opf
     {
     case OP_READ:
         cout<<"Read from  disk("<<diskno<<") offset("<<offset<<"),count("<<count<<")!"<<endl;
-        return getDisk(diskno)->read(offset,buf,count); //´ËÊ±µÄreadºÍwriteÊÇÖ¸´ÅÅÌ²Ù×÷¡£
+        return getDisk(diskno)->read(offset,buf,count); //ï¿½ï¿½Ê±ï¿½ï¿½readï¿½ï¿½writeï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ì²ï¿½ï¿½ï¿½ï¿½ï¿½
     case OP_WRITE:
         cout<<"Write to disk("<<diskno<<") offset("<<offset<<"),count("<<count<<")!"<<endl;
         return getDisk(diskno)->write(offset,buf,count);

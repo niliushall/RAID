@@ -13,8 +13,6 @@
 
 using namespace std;
 
-#define random(x) (rand()%x)
-
 #define OP_READ                  1
 #define OP_WRITE                 2
 #define OP_WRITE_CHECK_SUM      3
@@ -63,9 +61,6 @@ class Storage
         string name;
         static int count;
         static list<Storage *> store;
-
-    private:
-
 };
 
 typedef list<Storage *> STORAGELIST;
