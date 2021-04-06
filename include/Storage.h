@@ -19,7 +19,7 @@ using namespace std;
 #define OP_READ_REBUILD         4
 
 #define  SUCCESS 0
-#define  ERROR  -1
+// #define  ERROR  -1
 
 /*
  * 抽象的存储资源类，提供读写功能，具体过程由RAID和Disk类实现

@@ -21,7 +21,7 @@ bool RamDisk::emptyDisk() {
     return true;
 }
 
-int RamDisk::initDisk(int cap = DISK_SIZE) {
+int RamDisk::initDisk(int cap) {
     capacity = static_cast<size_t >(cap);
     state = DISKSTATE_NOTREADY;
     if (cap > 10240) {
