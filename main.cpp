@@ -10,6 +10,8 @@
 #include "RAID5.h"
 #include "RAID6.h"
 #include <windows.h>
+#include <fstream>
+#include "FileDisk.h"
 
 using namespace std;
 
@@ -64,7 +66,7 @@ int randomCheck(Client *c, int checktime, int hung_disk_num) {
 }
 
 
-int main() {
+/*int main() {
     int level = 0;
     int disk_num = 5;
 
@@ -83,5 +85,41 @@ int main() {
     randomCheck(&c, 5, 2);
 
     system("pause");
+    return 0;
+}*/
+
+/*
+int main() {
+    string file = "F:\\test.txt";
+    ifstream readfile(file, ios::in);
+    if(readfile.good()) {
+        cout << "ÎÄ¼þ´æÔÚ\n";
+        readfile.close();
+    }
+
+    if(remove(file.c_str()) == 0) {
+        cout << "remove...\n";
+        return 0;
+    }
+    cout << "É¾³ý´íÎó\n";
+}*/
+
+int main() {
+    FileDisk disk[5];
+    for(int i = 0; i < 5; i++) {
+        disk[i].initDisk();
+    }
+
+    RAID* r = (RAID6*) new RAID6;
+    for(int i = 0; i < 5; i++) {
+        r->addDisk(&disk[i]);
+    }
+    r->initRAID();
+
+    Client c(r);
+    randomCheck(&c, 5, 2);
+
+    system("pause");
+
     return 0;
 }

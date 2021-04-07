@@ -43,9 +43,6 @@ class RAID6 : public RAID
 
         size_t operate(int offset, void *buf, size_t count,int opflag);
         size_t operatedisk( void *buf,int opflag,list<DISKADDR>& diskaddrlist);
-
-
-    private:
 };
 
 

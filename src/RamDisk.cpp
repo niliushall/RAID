@@ -1,6 +1,6 @@
 #include "RamDisk.h"
-#include   <cstdlib>
-#include   <string>
+#include <cstdlib>
+#include <string>
 
 int RamDisk::count = 0;
 
@@ -21,8 +21,8 @@ bool RamDisk::emptyDisk() {
     return true;
 }
 
-int RamDisk::initDisk(int cap) {
-    capacity = static_cast<size_t >(cap);
+int RamDisk::initDisk(size_t cap) {
+    capacity = cap;
     state = DISKSTATE_NOTREADY;
     if (cap > 10240) {
         cout << "Too large ramdisk(limit:10240)!" << endl;

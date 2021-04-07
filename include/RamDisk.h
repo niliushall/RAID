@@ -3,24 +3,20 @@
 
 #include "Disk.h"
 
+class RamDisk : public Disk {
+public:
+    RamDisk();
+    ~RamDisk() override;
+    int initDisk(size_t capacity = DISK_SIZE) override;
+    size_t read(int offset, void *buf, size_t count) override;
+    size_t write(int offset, void *buf, size_t count) override;
+    bool emptyDisk() override;
 
-class RamDisk : public Disk
-{
-    public:
-        RamDisk();
-        virtual ~RamDisk();
-        virtual int initDisk(int capacity = DISK_SIZE);
-        virtual size_t read(int offset, void *buf, size_t count);
-        virtual size_t write(int offset, void *buf, size_t count);
-        virtual bool emptyDisk();
+    void *space;  //the address of  disk
 
-        void *space;  //the address of  disk
-
-    protected:
-        static int count;
-
-        int checkparam(int offset, void *buf, size_t count);
-    private:
+protected:
+    static int count;
+    int checkparam(int offset, void *buf, size_t count);
 };
 
 #endif // RAMDISK_H

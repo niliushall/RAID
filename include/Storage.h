@@ -21,6 +21,8 @@ using namespace std;
 #define  SUCCESS 0
 // #define  ERROR  -1
 
+
+
 /*
  * 抽象的存储资源类，提供读写功能，具体过程由RAID和Disk类实现
  */
@@ -36,7 +38,8 @@ class Storage
         int getstate() {return state;}
         string getname(){return name;}
         string gettype() {return type;}
-        size_t getcapacity() {return capacity;}
+
+        virtual size_t getcapacity() {return capacity;} // 获取单个磁盘的容量,需要修改
 
         virtual size_t read(int offset, void *buf, size_t count);
         virtual size_t write(int offset, void *buf, size_t count);

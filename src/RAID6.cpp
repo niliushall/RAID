@@ -8,9 +8,7 @@
 int getstate();
 
 RAID6::RAID6() : slidesize(SLIDESIZZE) {
-    stringstream ss;
-    ss << "RAID6";
-    ss >> name;
+    name = "RAID6";
 }
 
 RAID6::~RAID6() {
@@ -55,7 +53,7 @@ int RAID6::getstate() {
     return state;
 }
 
-/*容忍两个盘出现问题,三个或者三个以上将视为FAILED*/
+// 容忍两个盘出现问题,三个或者三个以上将视为FAILED
 int RAID6::check_raid_state() {
     int state = READY;
     list<Disk *>::iterator iter;
@@ -79,7 +77,7 @@ size_t RAID6::read(int offset, void *buf, size_t count) {
 }
 
 size_t RAID6::write(int offset, void *buf, size_t count) {
-    cout << "\n\nRAID6::write\n\n";
+    cout << "wl-RAID6::write" << endl;
 //    Sleep(10000);
     return operate(offset, buf, count, OP_WRITE);
 }
@@ -89,6 +87,8 @@ size_t RAID6::write(int offset, void *buf, size_t count) {
 *	len		 [in] length of data you want to write or read
 */
 int RAID6::addressMapping(int offset, size_t len) {
+    cout << "wl-RAID6::addressMapping" << endl;
+//    Sleep(5000);
     if (offset < 0 || (size_t) (offset + len) > capacity) {
         cout << "Invalid parameters.offset(" << offset << "),capacity(" << capacity << ")!" << endl;
         return -1;
@@ -159,12 +159,14 @@ Disk *RAID6::getDisk(int diskno) {
 }
 
 size_t RAID6::operate(int offset, void *buf, size_t count, int opflag) {
+    cout << "wl-RAID6::operate" << endl;
     int ret;
     ret = addressMapping(offset, count);    /*map data into all disks, all informatioin  is stored in diskaddrlist*/
     if (ret < 0) {
         cout << "Invalid offset and count" << endl;
         return -1;
     }
+
     return operatedisk(buf, opflag, diskaddrlist);
 }
 
@@ -175,6 +177,7 @@ size_t RAID6::operate(int offset, void *buf, size_t count, int opflag) {
 * buf     if read, buf is the space to store read data,if write ,buf is the space  to store write data
 */
 size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
+    cout << "wl-RAID6::operatedisk" << endl;
     int finished = 0;
     void *dataptr = buf;
     if (FAILED == check_raid_state())  /*RAID6 state check */
@@ -182,6 +185,8 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
         cout << "RAID6 current stat is FAILED" << endl;
         return -1;
     }
+
+    cout << "wl-opflag : " << opflag << endl;
     switch (opflag) {
         case OP_READ_REBUILD: {
             list<DISKADDR>::iterator iter;
@@ -216,11 +221,7 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                         finished += ptr->len;
                         cout << "Read   disk(" << ptr->diskno << ") offset(" << ptr->offset << "),count(" << ptr->len
                              << ")!" << endl;
-/*						for(int i=0;i<ptr->len;i++)
-                    {
-                        printf("%X  ",((char*)dataptr)[i]);
-                    }
-                    cout<<endl;*/
+
                         dataptr = (char *) dataptr + ptr->len;
                     }
                 }
@@ -260,11 +261,7 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
 
                                 cout << "restore data   disk(" << ptr->diskno << ") layer(" << ptr->layerno
                                      << ") offset(" << ptr->offset << "),count(" << ptr->len << ")!" << endl;
-                                /*    for(int i=0;i<ptr->len;i++)
-                                    {
-                                        printf("%X  ",((char*)dataptr)[i]);
-                                    }
-                                    cout<<endl;*/
+
                                 dataptr = (char *) dataptr + ptr->len;
                             }
                         } else if ((size_t) getDisk(ptr->diskno)->read(ptr->offset, dataptr, ptr->len) != ptr->len) {
@@ -274,11 +271,7 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
 
                             cout << "Read   disk(" << ptr->diskno << ") offset(" << ptr->offset << "),count("
                                  << ptr->len << ")!" << endl;
-                            /*  for(int i=0;i<ptr->len;i++)
-                              {
-                                  printf("%X  ",((char*)dataptr)[i]);
-                              }
-                              cout<<endl;*/
+
                             dataptr = (char *) dataptr + ptr->len;
                         }
                         //system("pause");
@@ -319,11 +312,7 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                                 finished += ptr->len;
                                 cout << "restore data   disk(" << ptr->diskno << ") layer(" << ptr->layerno
                                      << ") offset(" << ptr->offset << "),count(" << ptr->len << ")!" << endl;
-                                /*    for(int i=0;i<ptr->len;i++)
-                                    {
-                                        printf("%X  ",((char*)dataptr)[i]);
-                                    }
-                                    cout<<endl;*/
+
                                 dataptr = (char *) dataptr + ptr->len;
                             }
                         } else if ((size_t) getDisk(ptr->diskno)->read(ptr->offset, dataptr, ptr->len) != ptr->len) {
@@ -332,11 +321,7 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                             finished += ptr->len;
                             cout << "Read   disk(" << ptr->diskno << ") offset(" << ptr->offset << "),count("
                                  << ptr->len << ")!" << endl;
-                            /*  for(int i=0;i<ptr->len;i++)
-                              {
-                                  printf("%X  ",((char*)dataptr)[i]);
-                              }
-                              cout<<endl;*/
+
                             dataptr = (char *) dataptr + ptr->len;
                         }
                         //system("pause");
@@ -445,10 +430,6 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
             list<DISKADDR>::iterator iter;
             for (iter = diskaddrlist.begin(); iter != diskaddrlist.end(); iter++) {
                 getDisk(iter->diskno)->write(iter->offset, dataptr, iter->len);
-                /*for(int i=0;i<iter->len;i++)
-                {
-                    printf("%X  ",((char*)dataptr)[i]);
-                }*/
 
                 cout << endl;
                 finished += iter->len;

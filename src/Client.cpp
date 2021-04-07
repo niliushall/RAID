@@ -36,6 +36,7 @@ int Client::read(int offset, void *buf, size_t len) {
 }
 
 int Client::write(int offset, void *buf, size_t len) {
+    cout << "wl- Client::write" << endl;
     int ret = target->write(offset, buf, (size_t) len);
     cout << "*****ret is" << ret << endl;
 
@@ -47,6 +48,7 @@ int Client::write(int offset, void *buf, size_t len) {
 }
 
 int Client::randomWrite(int no, int total, size_t capacity) {
+    cout << "wl-Client::write" << endl;
     int ret = 0;
     int step = capacity / total;
 
@@ -127,7 +129,9 @@ int Client::randomCheck(int no, int total, size_t capacity) {
 int Client::batchWrite(int time) {
     srand(seed);
     int capacity = target->getcapacity();
+    cout << "wl-target->getcapacity() : " << capacity << endl;
     int i;
+
 
     for (i = 0; i < time; i++) {
         if (-1 == randomWrite(i, time, capacity)) {
@@ -135,8 +139,6 @@ int Client::batchWrite(int time) {
 
             break;
         }
-
-
     }
     return i;
 }

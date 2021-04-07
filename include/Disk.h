@@ -16,22 +16,21 @@
 
 class RAID;
 
-class Disk : public Storage
-{
-    public:
-        Disk();
-        virtual int initDisk(int capacity) {return DISKSTATE_NOTREADY;}
-        virtual ~Disk();
-        virtual bool isvalidstate(int s);
-        virtual bool emptyDisk(){return false;}
-        void setstate(int s);
+class Disk : public Storage {
+public:
+    Disk();
+    virtual int initDisk(size_t capacity) {return DISKSTATE_NOTREADY;}
+    virtual ~Disk();
+    virtual bool isvalidstate(int s);
+    virtual bool emptyDisk(){return false;}
+    size_t getcapacity();
+    void setstate(int s);
 
-    protected:
-        //size_t capacity;
-        RAID *group;
+protected:
+    size_t disk_capacity;   // 单个磁盘容量
+    RAID *group;
 
-        static int count;
-    private:
+    static int count;
 };
 
 #endif // DISK_H
