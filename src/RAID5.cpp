@@ -7,7 +7,7 @@
 
 int getstate();
 
-RAID5::RAID5() : slidesize(SLIDESIZZE) {
+RAID5::RAID5() : slidesize(SLIDESIZE) {
     set_name("raid5");
 }
 
@@ -240,12 +240,12 @@ size_t RAID5::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                     DISKADDR *ptr = &(*iter);
                     if (ptr->diskno == fail_disk_no)  /*如果存取数据的盘坏掉，需要从其他盘来恢复*/
                     {
-                        char restore_data[SLIDESIZZE];
-                        memset(restore_data, 0, SLIDESIZZE);
+                        char restore_data[SLIDESIZE];
+                        memset(restore_data, 0, SLIDESIZE);
                         if (SUCCESS != raid_disk_restore(ptr, restore_data)) {
                             return -1;
                         } else {
-                            memmove(dataptr, restore_data + (ptr->offset % SLIDESIZZE), ptr->len);
+                            memmove(dataptr, restore_data + (ptr->offset % SLIDESIZE), ptr->len);
                             finished += ptr->len;
 
                             cout << "restore data   disk(" << ptr->diskno << ") layer(" << ptr->layerno << ") offset("
@@ -323,8 +323,8 @@ int RAID5::write_check_sum_disk(list<DISKADDR> &addrlist) {
     influenced_layers.erase(new_end, influenced_layers.end());
     vector<int>::iterator layers_iter;
     char *data_ptr = NULL;
-    char check_sum[SLIDESIZZE];
-    if (SUCCESS != (ret = alloc_read_disk_data((size_t) (disklist.size() - 1) * SLIDESIZZE, data_ptr))) {
+    char check_sum[SLIDESIZE];
+    if (SUCCESS != (ret = alloc_read_disk_data((size_t) (disklist.size() - 1) * SLIDESIZE, data_ptr))) {
     } else {
         for (layers_iter = influenced_layers.begin();
              SUCCESS == ret && layers_iter != influenced_layers.end(); layers_iter++) {
@@ -365,13 +365,13 @@ int RAID5::read_layer_data(int layno, char *data_ptr, int except_disk_no) {
         if (except_disk_no != i) {
             disk_addr.layerno = layno;
             disk_addr.diskno = i;
-            disk_addr.len = SLIDESIZZE;
-            disk_addr.offset = SLIDESIZZE * layno;
+            disk_addr.len = SLIDESIZE;
+            disk_addr.offset = SLIDESIZE * layno;
             disk_addr_list.push_back(disk_addr);
         }
     }
     size_t data_size = operatedisk(data_ptr, OP_READ_REBUILD, disk_addr_list);
-    if (data_size != SLIDESIZZE * ((disklist.size() - 1))) {
+    if (data_size != SLIDESIZE * ((disklist.size() - 1))) {
         ret = ERROR;
     }
     return ret;
@@ -383,14 +383,14 @@ int RAID5::read_all_data(char *all_data) {
     int disk_no;
     list<DISKADDR> disk_addr_list;
     DISKADDR disk_addr;
-    for (size_t i = 0; i < disklist.size() * DISK_SIZE / SLIDESIZZE; i++) {
+    for (size_t i = 0; i < disklist.size() * DISK_SIZE / SLIDESIZE; i++) {
         check_sum = (i / disklist.size()) % disklist.size();
         disk_no = i % disklist.size();
         if (disk_no != check_sum) {
             disk_addr.layerno = i / disklist.size();
             disk_addr.diskno = i;
-            disk_addr.len = SLIDESIZZE;
-            disk_addr.offset = SLIDESIZZE * disk_addr.layerno;
+            disk_addr.len = SLIDESIZE;
+            disk_addr.offset = SLIDESIZE * disk_addr.layerno;
             disk_addr_list.push_back(disk_addr);
         }
     }
@@ -407,9 +407,9 @@ int RAID5::get_data_check_sum(char *data_ptr, int data_disk_num, char *check_sum
     if (NULL == (char_check_sum = (char *) malloc(data_disk_num * sizeof(char)))) {
         ret = ERROR;
     }
-    for (int char_index = 0; SUCCESS == ret && char_index < SLIDESIZZE; char_index++) {
+    for (int char_index = 0; SUCCESS == ret && char_index < SLIDESIZE; char_index++) {
         for (int k = 0; SUCCESS == ret && k < data_disk_num; k++) {
-            char_check_sum[k] = data_ptr[k * SLIDESIZZE + char_index];
+            char_check_sum[k] = data_ptr[k * SLIDESIZE + char_index];
         }
         calculate_check_sum(char_check_sum, data_disk_num, check_sum[char_index]);
     }
@@ -444,10 +444,10 @@ int RAID5::write_check_sum(int layerno, char *check_sum) {
     DISKADDR diskaddr;
     diskaddr.layerno = layerno;
     diskaddr.diskno = check_sum_disk_no;
-    diskaddr.len = SLIDESIZZE;
-    diskaddr.offset = (size_t) layerno * SLIDESIZZE;
+    diskaddr.len = SLIDESIZE;
+    diskaddr.offset = (size_t) layerno * SLIDESIZE;
     addrlist.push_back(diskaddr);
-    if (SLIDESIZZE != operatedisk(check_sum, OP_WRITE_CHECK_SUM, addrlist)) {
+    if (SLIDESIZE != operatedisk(check_sum, OP_WRITE_CHECK_SUM, addrlist)) {
         ret = ERROR;
     }
     return ret;
@@ -459,7 +459,7 @@ int RAID5::raid_disk_restore(DISKADDR *file_disk_addr, char *restore_data) {
     int layer_no = file_disk_addr->layerno;
     int fail_disk_no = file_disk_addr->diskno;
     char *data_ptr = NULL;
-    if (SUCCESS != (ret = alloc_read_disk_data((size_t) (disklist.size() - 1) * SLIDESIZZE, data_ptr))) {
+    if (SUCCESS != (ret = alloc_read_disk_data((size_t) (disklist.size() - 1) * SLIDESIZE, data_ptr))) {
     }
     if (SUCCESS != (ret = read_layer_data(layer_no, data_ptr, fail_disk_no)))    /*read one layer data*/
     {

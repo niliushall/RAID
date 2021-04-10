@@ -4,7 +4,7 @@
 #include "RAID.h"
 #include <algorithm>
 
-#define  SLIDESIZZE  256
+#define  SLIDESIZE  256
 
 class RAID5 : public RAID
 {

@@ -66,7 +66,7 @@ int randomCheck(Client *c, int checktime, int hung_disk_num) {
 }
 
 
-/*int main() {
+int main() {
     int level = 0;
     int disk_num = 5;
 
@@ -82,11 +82,13 @@ int randomCheck(Client *c, int checktime, int hung_disk_num) {
     r->initRAID();
 
     Client c(r);
-    randomCheck(&c, 5, 2);
+    randomCheck(&c, 5, 0);
+
+
 
     system("pause");
     return 0;
-}*/
+}
 
 /*
 int main() {
@@ -104,7 +106,8 @@ int main() {
     cout << "É¾³ý´íÎó\n";
 }*/
 
-int main() {
+
+/*int main() {
     FileDisk disk[5];
     for(int i = 0; i < 5; i++) {
         disk[i].initDisk();
@@ -122,4 +125,4 @@ int main() {
     system("pause");
 
     return 0;
-}
+}*/

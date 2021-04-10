@@ -3,7 +3,7 @@
 
 #include "RAID.h"
 
-#define  SLIDESIZZE  256
+#define  SLIDESIZE  256
 class RAID6 : public RAID
 {
     public:

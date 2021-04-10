@@ -38,7 +38,7 @@ int Client::read(int offset, void *buf, size_t len) {
 int Client::write(int offset, void *buf, size_t len) {
     cout << "wl- Client::write" << endl;
     int ret = target->write(offset, buf, (size_t) len);
-    cout << "*****ret is" << ret << endl;
+    cout << "***** ret is" << ret << endl;
 
     if (-1 == ret) {
         cout << "Write to " << target->getname() << " failed.offset(" << offset << "),len(" << len << ")!" << endl;

@@ -6,5 +6,5 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(include)
 add_subdirectory(src)
 
-add_executable(main main.cpp src/FileDisk.cpp include/FileDisk.h)
+add_executable(main main.cpp)
 target_link_libraries(main SRC)

@@ -23,6 +23,7 @@ bool RamDisk::emptyDisk() {
 
 int RamDisk::initDisk(size_t cap) {
     capacity = cap;
+    disk_capacity = cap;
     state = DISKSTATE_NOTREADY;
     if (cap > 10240) {
         cout << "Too large ramdisk(limit:10240)!" << endl;
@@ -75,6 +76,7 @@ size_t RamDisk::read(int offset, void *buf, size_t count) {
 
 /*将buf一部分内容写到 disk 中*/
 size_t RamDisk::write(int offset, void *buf, size_t count) {
+    cout << "wl-RamDisk::write : offset" << offset << ", count = " << count << ", capacity_total = " << capacity << endl;
     if (checkparam(offset, buf, count) == -1)
         return -1;
 

@@ -7,7 +7,7 @@
 
 int getstate();
 
-RAID6::RAID6() : slidesize(SLIDESIZZE) {
+RAID6::RAID6() : slidesize(SLIDESIZE) {
     name = "RAID6";
 }
 
@@ -87,7 +87,7 @@ size_t RAID6::write(int offset, void *buf, size_t count) {
 *	len		 [in] length of data you want to write or read
 */
 int RAID6::addressMapping(int offset, size_t len) {
-    cout << "wl-RAID6::addressMapping" << endl;
+    cout << "wl-RAID6::addressMapping, capacity = " << capacity << endl;
 //    Sleep(5000);
     if (offset < 0 || (size_t) (offset + len) > capacity) {
         cout << "Invalid parameters.offset(" << offset << "),capacity(" << capacity << ")!" << endl;
@@ -198,11 +198,6 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                     finished += ptr->len;
                     cout << "Read  rebuild  disk(" << ptr->diskno << ") offset(" << ptr->offset << "),count("
                          << ptr->len << ")!" << endl;
-                    /*                  for(int i=0;i<ptr->len;i++)
-                                  {
-                                      printf("%X  ",((char*)dataptr)[i]);
-                                  }
-                                  cout<<endl;*/
                     dataptr = (char *) dataptr + ptr->len;
 
                 }
@@ -251,12 +246,12 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                         if (ptr->diskno == fail_disk_no)  /*如果存取数据的盘坏掉，需要从其他盘来恢复*/
                         {
 
-                            char restore_data[SLIDESIZZE];
-                            memset(restore_data, 0, SLIDESIZZE);
+                            char restore_data[SLIDESIZE];
+                            memset(restore_data, 0, SLIDESIZE);
                             if (SUCCESS != raid_disk_restore(ptr, restore_data)) {
                                 return -1;
                             } else {
-                                memmove(dataptr, restore_data + (ptr->offset % SLIDESIZZE), ptr->len);
+                                memmove(dataptr, restore_data + (ptr->offset % SLIDESIZE), ptr->len);
                                 finished += ptr->len;
 
                                 cout << "restore data   disk(" << ptr->diskno << ") layer(" << ptr->layerno
@@ -303,12 +298,12 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                         DISKADDR *ptr = &(*iter);
                         if (ptr->diskno == fail_disk_no)  /*如果存取数据的盘坏掉，需要从其他盘来恢复*/
                         {
-                            char restore_data[SLIDESIZZE];
-                            memset(restore_data, 0, SLIDESIZZE);
+                            char restore_data[SLIDESIZE];
+                            memset(restore_data, 0, SLIDESIZE);
                             if (SUCCESS != raid_disk_restore(ptr, restore_data)) {
                                 return -1;
                             } else {
-                                memmove(dataptr, restore_data + (ptr->offset % SLIDESIZZE), ptr->len);
+                                memmove(dataptr, restore_data + (ptr->offset % SLIDESIZE), ptr->len);
                                 finished += ptr->len;
                                 cout << "restore data   disk(" << ptr->diskno << ") layer(" << ptr->layerno
                                      << ") offset(" << ptr->offset << "),count(" << ptr->len << ")!" << endl;
@@ -334,7 +329,7 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                     int except_disk_no = 0;
                     bool *layer_done = new bool[disklist.size()];
                     char *data_ptr = NULL;
-                    char check_sum[SLIDESIZZE];
+                    char check_sum[SLIDESIZE];
 
                     /*先将所有的数据盘中的数据全部恢复至数据盘
                      *再将数据从数据盘中读出
@@ -342,7 +337,7 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                      *首先用斜校验恢复一个层中的其中一个坏盘的数据，另外一个用横校验恢复
                      *直至恢复所有数据到数据盘*/
                     for (size_t layer_no = 0;
-                         layer_no < DISK_SIZE / SLIDESIZZE; layer_no = layer_no + disklist.size() - 2) {
+                         layer_no < DISK_SIZE / SLIDESIZE; layer_no = layer_no + disklist.size() - 2) {
                         flag_init(layer_done);
                         while (all_data_restored(layer_done) == false) {
                             for (int i = 0; i < disklist.size() - 2; i++) {
@@ -350,13 +345,13 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                                                                     fail_disk_no2, except_disk_no);
                                 if (fail_disk_count == 2) {
                                 } else if (fail_disk_count == 1) {
-                                    ret = alloc_read_disk_data((size_t) (disklist.size() - 2) * SLIDESIZZE, data_ptr);
+                                    ret = alloc_read_disk_data((size_t) (disklist.size() - 2) * SLIDESIZE, data_ptr);
 
                                     ret = read_layer_data_for_inclined_check(layer_no, i, data_ptr, except_disk_no);
                                     ret = get_data_check_sum(data_ptr, (int) disklist.size() - 2, check_sum);
                                     ret = write_check_sum_for_inclined_check(layer_no + i, except_disk_no, check_sum);
 
-                                    //ret = alloc_read_disk_data((size_t) (disklist.size() - 2) * SLIDESIZZE, data_ptr);
+                                    //ret = alloc_read_disk_data((size_t) (disklist.size() - 2) * SLIDESIZE, data_ptr);
                                     if (except_disk_no == fail_disk_no1) {
                                         ret = read_layer_data(layer_no + i, data_ptr,
                                                               fail_disk_no2);    /*read one layer data*/
@@ -415,6 +410,8 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
 
         case OP_WRITE: {
             list<DISKADDR>::iterator iter;
+            cout << "wl- OP_WRITE : capacity = " << capacity << endl;
+
             for (iter = diskaddrlist.begin(); iter != diskaddrlist.end(); iter++) {
                 getDisk(iter->diskno)->write(iter->offset, dataptr, iter->len);
                 finished += iter->len;
@@ -477,45 +474,33 @@ int RAID6::count_known_datas(bool *flag, int i, int _layer, int fail_disk_no1, i
 
 /*生成P、Q校验数据，并写入到每一层的校验磁盘*/
 int RAID6::write_check_sum_disk(list<DISKADDR> &addrlist) {
+    cout << "wl-RAID6::write_check_sum_disk" << endl;
+
     int ret = SUCCESS;
-    //std::vector<int> influenced_layers;
-    //list<DISKADDR>::iterator iter;
-    //for(iter=addrlist.begin();iter!=addrlist.end();iter++)
-    //{
-    //    influenced_layers.push_back(iter->layerno);
-    //}
-    //vector<int>::iterator new_end;
-    //new_end = unique(influenced_layers.begin(), influenced_layers.end());    //"删除"相邻的重复元素
-    //influenced_layers.erase(new_end, influenced_layers.end());  //删除（真正的删除）重复的元素
-    char *data_ptr = NULL;
-    char check_sum[SLIDESIZZE];
-    if (SUCCESS != (ret = alloc_read_disk_data((size_t) (disklist.size() - 2) * SLIDESIZZE, data_ptr))) {
+
+    char *data_ptr = nullptr;
+    char check_sum[SLIDESIZE];
+    if (SUCCESS != (ret = alloc_read_disk_data((size_t) (disklist.size() - 2) * SLIDESIZE, data_ptr))) {
     } else {
         int check_sum_disk_no = disklist.size() - 1;
-        for (size_t layers_iter = 0; SUCCESS == ret && layers_iter < DISK_SIZE / SLIDESIZZE; layers_iter++) {
-            //int check_sum_disk_no = disklist.size()-2;
-            //cout<<"layers_iter = "<<layers_iter<<endl;
-            ret = read_layer_data_for_checkP(layers_iter, data_ptr);
 
+        for (size_t layers_iter = 0; SUCCESS == ret && layers_iter < DISK_SIZE / SLIDESIZE; layers_iter++) {
+            ret = read_layer_data_for_checkP(layers_iter, data_ptr);
             ret = get_data_check_sum(data_ptr, (int) disklist.size() - 2, check_sum);
             ret = write_check_sum(layers_iter, check_sum);
-            //if(SUCCESS!=(ret=read_layer_data_for_checkP(layers_iter,data_ptr)))		/*read one layer data for check1*/
-            //{
-            //}
-
-            /*get data check sum of one layer*/
-            //else if(SUCCESS!=(ret=get_data_check_sum(data_ptr,(int)disklist.size()-2,check_sum)))
-            //{
-            //}
-            //else if(SUCCESS!=(ret=write_check_sum(layers_iter,check_sum))) 	/*write one check sum block*/
-            //{
-            //}
         }
-        for (size_t layers_iter = 0; SUCCESS == ret && layers_iter < DISK_SIZE / SLIDESIZZE; layers_iter++) {
+
+        cout << "\nwl-RAID6::write_check_sum_disk : write_check_sum 结束\n\n";
+
+        for (size_t layers_iter = 0; SUCCESS == ret && layers_iter < DISK_SIZE / SLIDESIZE; layers_iter++) {
             if (SUCCESS != (ret = read_layer_data_for_checkQ(layers_iter, data_ptr, check_sum_disk_no))) {
+                ;
             } else if (SUCCESS != (ret = get_data_check_sum(data_ptr, (int) disklist.size() - 2, check_sum))) {
-            } else if (SUCCESS != (ret = write_check_sum(layers_iter, check_sum)))    /*write one check sum block*/
-            {
+                ;
+            } else if (SUCCESS != (ret = write_check_sum(layers_iter, check_sum))) {    /*write one check sum block*/
+                ;
+            } else {
+                ;
             }
         }
     }
@@ -548,13 +533,13 @@ int RAID6::read_layer_data(int layno, char *data_ptr, int except_disk_no) {
         if (except_disk_no != i) {
             disk_addr.layerno = layno;
             disk_addr.diskno = i;
-            disk_addr.len = SLIDESIZZE;
-            disk_addr.offset = SLIDESIZZE * layno;
+            disk_addr.len = SLIDESIZE;
+            disk_addr.offset = SLIDESIZE * layno;
             disk_addr_list.push_back(disk_addr);
         }
     }
     int data_size = operatedisk(data_ptr, OP_READ_REBUILD, disk_addr_list);
-    if (data_size != SLIDESIZZE * ((disklist.size() - 2))) {
+    if (data_size != SLIDESIZE * ((disklist.size() - 2))) {
         ret = ERROR;
     }
     return ret;
@@ -569,8 +554,8 @@ int RAID6::read_layer_data_for_inclined_check(int layno, int disk_no, char *data
         if (except_disk_no != temp_disk_no) {
             disk_addr.layerno = layno + i;
             disk_addr.diskno = temp_disk_no;
-            disk_addr.len = SLIDESIZZE;
-            disk_addr.offset = SLIDESIZZE * disk_addr.layerno;
+            disk_addr.len = SLIDESIZE;
+            disk_addr.offset = SLIDESIZE * disk_addr.layerno;
             disk_addr_list.push_back(disk_addr);
         }
         temp_disk_no = (temp_disk_no + 1) % (disklist.size() - 1);
@@ -578,12 +563,12 @@ int RAID6::read_layer_data_for_inclined_check(int layno, int disk_no, char *data
     }
     disk_addr.layerno = layno;
     disk_addr.diskno = disk_no;
-    disk_addr.len = SLIDESIZZE;
-    disk_addr.offset = SLIDESIZZE * layno;
+    disk_addr.len = SLIDESIZE;
+    disk_addr.offset = SLIDESIZE * layno;
     disk_addr_list.push_back(disk_addr);
 
     int data_size = operatedisk(data_ptr, OP_READ_REBUILD, disk_addr_list);
-    if (data_size != SLIDESIZZE * ((disklist.size() - 2))) {
+    if (data_size != SLIDESIZE * ((disklist.size() - 2))) {
         ret = ERROR;
     }
     return ret;
@@ -592,42 +577,43 @@ int RAID6::read_layer_data_for_inclined_check(int layno, int disk_no, char *data
 
 //生成校验盘P
 int RAID6::read_layer_data_for_checkP(int layno, char *data_ptr) {
+    cout << "wl-RAID6::read_layer_data_for_checkP" << endl;
+
     int ret = SUCCESS;
     list<DISKADDR> disk_addr_list;
     DISKADDR disk_addr;
-    //int except_disk_no1=except_disk_no;
-    //int except_disk_no2=except_disk_no+1;
+
     for (int i = 0; i < disklist.size() - 2; i++) {
-        //if((except_disk_no1 != i)&&(except_disk_no2 != i))
-        //{
         disk_addr.layerno = layno;
         disk_addr.diskno = i;
-        disk_addr.len = SLIDESIZZE;
-        disk_addr.offset = SLIDESIZZE * layno;
+        disk_addr.len = SLIDESIZE;
+        disk_addr.offset = SLIDESIZE * layno;
         disk_addr_list.push_back(disk_addr);
-        //}
     }
+
     int data_size = operatedisk(data_ptr, OP_READ_REBUILD, disk_addr_list);
-/*    for(int i=0;i<SLIDESIZZE*2;i++)
-    {
-        printf("%X  ",((char*)data_ptr)[i]);
-    }
-    cout<<endl;
-    system("pause");*/
-    if (data_size != SLIDESIZZE * ((disklist.size() - 2))) {
+
+    if (data_size != SLIDESIZE * ((disklist.size() - 2))) {
         ret = ERROR;
     }
     return ret;
 }
 
-//生成校验盘Q
+// 生成校验盘Q
 int RAID6::read_layer_data_for_checkQ(int layno, char *data_ptr, int except_disk_no) {
+    cout << "wl-RAID6::read_layer_data_for_checkQ" << endl;
+
     int ret = SUCCESS;
     int layer_no;
     int temp_diskno;
     list<DISKADDR> disk_addr_list;
     DISKADDR disk_addr;
+
+    cout << "wl- before for : len = " << disk_addr.len << ", offset = " << disk_addr.offset << ", addr = " << &disk_addr << endl;
+
     for (int i = 0; i < disklist.size() - 2; i++) {
+        disk_addr.len = SLIDESIZE;
+
         disk_addr.layerno = layno / disklist.size() * disklist.size() + i;
         layer_no = disk_addr.layerno;
         temp_diskno = layno % (disklist.size() - 1) + i;
@@ -635,13 +621,18 @@ int RAID6::read_layer_data_for_checkQ(int layno, char *data_ptr, int except_disk
             disk_addr.diskno = 0;
         else
             disk_addr.diskno = temp_diskno;
-        disk_addr.offset = layer_no * SLIDESIZZE;
+        disk_addr.offset = layer_no * SLIDESIZE;
         disk_addr_list.push_back(disk_addr);
+        cout << "wl- in for - " << i << " : len = " << disk_addr.len << ", offset = "
+            << disk_addr.offset << ", diskno = " << disk_addr.diskno << ", layer_no = "
+            << disk_addr.layerno << endl;
     }
+
     int data_size = operatedisk(data_ptr, OP_READ_REBUILD, disk_addr_list);
-    if (data_size != SLIDESIZZE * ((disklist.size() - 2))) {
+    if (data_size != SLIDESIZE * ((disklist.size() - 2))) {
         ret = ERROR;
     }
+
     return ret;
 }
 
@@ -657,9 +648,9 @@ int RAID6::get_data_check_sum(char *data_ptr, int data_disk_num, char *check_sum
     if (NULL == (char_check_sum = (char *) malloc(data_disk_num * sizeof(char)))) {
         ret = ERROR;
     }
-    for (int char_index = 0; SUCCESS == ret && char_index < SLIDESIZZE; char_index++) {
+    for (int char_index = 0; SUCCESS == ret && char_index < SLIDESIZE; char_index++) {
         for (int k = 0; SUCCESS == ret && k < data_disk_num; k++) {
-            char_check_sum[k] = data_ptr[k * SLIDESIZZE + char_index];
+            char_check_sum[k] = data_ptr[k * SLIDESIZE + char_index];
         }
         calculate_check_sum(char_check_sum, data_disk_num, check_sum[char_index]);//char_check_sum 当前的原始数据
     }
@@ -697,10 +688,10 @@ int RAID6::write_check_sum(int layerno, char *check_sum) {
     DISKADDR diskaddr;
     diskaddr.layerno = layerno;
     diskaddr.diskno = check_sum_disk_no;
-    diskaddr.len = SLIDESIZZE;
-    diskaddr.offset = (size_t) layerno * SLIDESIZZE;
+    diskaddr.len = SLIDESIZE;
+    diskaddr.offset = (size_t) layerno * SLIDESIZE;
     addrlist.push_back(diskaddr);
-    if (SLIDESIZZE != operatedisk(check_sum, OP_WRITE_CHECK_SUM, addrlist)) {
+    if (SLIDESIZE != operatedisk(check_sum, OP_WRITE_CHECK_SUM, addrlist)) {
         ret = ERROR;
     }
     return ret;
@@ -712,10 +703,10 @@ int RAID6::write_check_sum_for_inclined_check(int layerno, int disk_no, char *ch
     DISKADDR diskaddr;
     diskaddr.layerno = layerno;
     diskaddr.diskno = disk_no;
-    diskaddr.len = SLIDESIZZE;
-    diskaddr.offset = (size_t) layerno * SLIDESIZZE;
+    diskaddr.len = SLIDESIZE;
+    diskaddr.offset = (size_t) layerno * SLIDESIZE;
     addrlist.push_back(diskaddr);
-    if (SLIDESIZZE != operatedisk(check_sum, OP_WRITE_CHECK_SUM, addrlist)) {
+    if (SLIDESIZE != operatedisk(check_sum, OP_WRITE_CHECK_SUM, addrlist)) {
         ret = ERROR;
     }
     return ret;
@@ -726,7 +717,7 @@ int RAID6::raid_disk_restore(DISKADDR *file_disk_addr, char *restore_data) {
     int layer_no = file_disk_addr->layerno;
     int fail_disk_no = file_disk_addr->diskno;
     char *data_ptr = NULL;
-    if (SUCCESS != (ret = alloc_read_disk_data((size_t) (disklist.size() - 2) * SLIDESIZZE, data_ptr))) {
+    if (SUCCESS != (ret = alloc_read_disk_data((size_t) (disklist.size() - 2) * SLIDESIZE, data_ptr))) {
     }
     if (SUCCESS != (ret = read_layer_data(layer_no, data_ptr, fail_disk_no)))    /*read one layer data*/
     {
