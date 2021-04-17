@@ -125,8 +125,10 @@ int RAID::set_rand_disk_hung1() {
     int ret = SUCCESS;
     list<Disk *>::iterator it;
     int i;
-    for (it = disklist.begin(), i = 0; i < disklist.size() - 1; it++, i++) {
+    for (it = disklist.begin(), i = 0; i < disklist.size() - 2; it++, i++) {
     }
+
+    cout << "hung disk : " << i << endl;
     (*it)->setstate(DISKSTATE_HUNG);
     return ret;
 }
@@ -144,6 +146,7 @@ int RAID::set_rand_disk_hung() {
         for (it = disklist.begin(); it != disklist.end(); it++) {
             if (count == diskno && (*it)->getstate() == DISKSTATE_READY) //确保被hung 的是正常的disk
             {
+                cout << "hung disk : " << diskno << endl;
                 (*it)->setstate(DISKSTATE_HUNG);
                 break;
             }
@@ -155,7 +158,7 @@ int RAID::set_rand_disk_hung() {
         }
     }
     if (time == 0) {
-        ret = ERROR;
+        ret = ERR;
     }
     return ret;
 }

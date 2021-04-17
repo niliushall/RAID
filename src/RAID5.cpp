@@ -351,7 +351,7 @@ int RAID5::alloc_read_disk_data(size_t size, char *&ptr) {
     ptr = NULL;
     ptr = (char *) malloc(size);
     if (NULL == ptr) {
-        ret = ERROR;
+        ret = ERR;
     }
     return ret;
 }
@@ -372,7 +372,7 @@ int RAID5::read_layer_data(int layno, char *data_ptr, int except_disk_no) {
     }
     size_t data_size = operatedisk(data_ptr, OP_READ_REBUILD, disk_addr_list);
     if (data_size != SLIDESIZE * ((disklist.size() - 1))) {
-        ret = ERROR;
+        ret = ERR;
     }
     return ret;
 }
@@ -396,7 +396,7 @@ int RAID5::read_all_data(char *all_data) {
     }
     size_t data_size = operatedisk(all_data, OP_READ_REBUILD, disk_addr_list);
     if (data_size != DISK_SIZE * ((disklist.size() - 1))) {
-        ret = ERROR;
+        ret = ERR;
     }
     return ret;
 }
@@ -405,7 +405,7 @@ int RAID5::get_data_check_sum(char *data_ptr, int data_disk_num, char *check_sum
     int ret = SUCCESS;
     char *char_check_sum = NULL;
     if (NULL == (char_check_sum = (char *) malloc(data_disk_num * sizeof(char)))) {
-        ret = ERROR;
+        ret = ERR;
     }
     for (int char_index = 0; SUCCESS == ret && char_index < SLIDESIZE; char_index++) {
         for (int k = 0; SUCCESS == ret && k < data_disk_num; k++) {
@@ -448,7 +448,7 @@ int RAID5::write_check_sum(int layerno, char *check_sum) {
     diskaddr.offset = (size_t) layerno * SLIDESIZE;
     addrlist.push_back(diskaddr);
     if (SLIDESIZE != operatedisk(check_sum, OP_WRITE_CHECK_SUM, addrlist)) {
-        ret = ERROR;
+        ret = ERR;
     }
     return ret;
 }

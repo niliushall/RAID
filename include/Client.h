@@ -31,8 +31,8 @@ public:
 
 
 protected:
-    Storage *target;  /*storage of raid*/
-    int seed;
+    Storage *target;  // RAID 对象
+    int seed;   // batchCheck() 与 batchWrite() 用相同的种子，保证产生的随机序列相同
 
     int randomCheck(int no, int total, size_t capacity);
 

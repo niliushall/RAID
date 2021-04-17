@@ -19,7 +19,7 @@ using namespace std;
 #define OP_READ_REBUILD         4
 
 #define  SUCCESS 0
-// #define  ERROR  -1
+#define  ERR  -1
 
 
 

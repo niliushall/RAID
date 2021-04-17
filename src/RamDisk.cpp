@@ -34,6 +34,7 @@ int RamDisk::initDisk(size_t cap) {
         cout << "Malloc failed, create Ramdisk failed!" << endl;
         return state;
     }
+    memset(space, 0, cap);
 
     state = DISKSTATE_READY;
     return state;
@@ -76,7 +77,6 @@ size_t RamDisk::read(int offset, void *buf, size_t count) {
 
 /*将buf一部分内容写到 disk 中*/
 size_t RamDisk::write(int offset, void *buf, size_t count) {
-    cout << "wl-RamDisk::write : offset" << offset << ", count = " << count << ", capacity_total = " << capacity << endl;
     if (checkparam(offset, buf, count) == -1)
         return -1;
 

@@ -36,9 +36,8 @@ int Client::read(int offset, void *buf, size_t len) {
 }
 
 int Client::write(int offset, void *buf, size_t len) {
-    cout << "wl- Client::write" << endl;
     int ret = target->write(offset, buf, (size_t) len);
-    cout << "***** ret is" << ret << endl;
+    cout << "***** ret is " << ret << endl;
 
     if (-1 == ret) {
         cout << "Write to " << target->getname() << " failed.offset(" << offset << "),len(" << len << ")!" << endl;
@@ -48,7 +47,6 @@ int Client::write(int offset, void *buf, size_t len) {
 }
 
 int Client::randomWrite(int no, int total, size_t capacity) {
-    cout << "wl-Client::write" << endl;
     int ret = 0;
     int step = capacity / total;
 
@@ -81,26 +79,28 @@ int Client::randomCheck(int no, int total, size_t capacity) {
     int ret;
     int step = capacity / total;
 
-    char buffer1[BUFSIZE], buffer2[BUFSIZE];
+    char buffer1[BUFSIZE] = {0}, buffer2[BUFSIZE] = {0};
 
     int offset = rand() % step;
+    cout << "wl- Client::randomCheck offset = " << offset << endl;
     int len = rand() % (step - offset);
+    cout << "wl- Client::randomCheck len = " << len << endl;
     offset = offset + step * no;
 
     if (len == 0) return 0;
 
     cout << no << " Check at " << target->getname() << ",offset(" << offset << ") size(" << len << ")!" << endl;
 
-    void *ptr1 = NULL;
-    void *ptr2 = NULL;
+    char* ptr1 = nullptr;
+    char* ptr2 = nullptr;
 
     if (len <= BUFSIZE) {
         ptr1 = buffer1;
         ptr2 = buffer2;
     } else {
-        ptr1 = malloc(len);
-        ptr2 = malloc(len);
-        if ((ptr1 == NULL) || (ptr2 == NULL)) {
+        ptr1 = (char*)malloc(len);
+        ptr2 = (char*)malloc(len);
+        if ((ptr1 == nullptr) || (ptr2 == nullptr)) {
             cout << "Malloc failed." << endl;
             return -1;
         }
@@ -108,12 +108,18 @@ int Client::randomCheck(int no, int total, size_t capacity) {
 
     memset(ptr1, 0, len);
     memset(ptr2, 0, len);
-    char *ptr = (char *) ptr1;
+
+    char* ptr = ptr1;
     for (int i = 0; i < len; i++)
         ptr[i] = rand() % 128;
 
     ret = read(offset, ptr2, len);
     ret = memcmp(ptr1, ptr2, len);
+    cout << "wl- memcmp : ret = " << ret << endl;
+
+
+    system("pause");
+
     if (ret != 0) {
         checkmemory(ptr1, ptr2, len, "Dismatch details:");
     }

@@ -47,7 +47,6 @@ int randomhungdisk(Client *c, int hung_num) {
 }
 
 int randomCheck(Client *c, int checktime, int hung_disk_num) {
-
     c->batchWrite(checktime);
     randomhungdisk(c, hung_disk_num);
     int ret = c->batchCheck(checktime);
@@ -82,9 +81,7 @@ int main() {
     r->initRAID();
 
     Client c(r);
-    randomCheck(&c, 5, 0);
-
-
+    randomCheck(&c, 1, 2);
 
     system("pause");
     return 0;
@@ -95,7 +92,7 @@ int main() {
     string file = "F:\\test.txt";
     ifstream readfile(file, ios::in);
     if(readfile.good()) {
-        cout << "ÎÄ¼þ´æÔÚ\n";
+        cout << "æ–‡ä»¶å­˜åœ¨\n";
         readfile.close();
     }
 
@@ -103,7 +100,7 @@ int main() {
         cout << "remove...\n";
         return 0;
     }
-    cout << "É¾³ý´íÎó\n";
+    cout << "åˆ é™¤é”™è¯¯\n";
 }*/
 
 
