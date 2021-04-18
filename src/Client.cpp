@@ -115,6 +115,16 @@ int Client::randomCheck(int no, int total, size_t capacity) {
 
     ret = read(offset, ptr2, len);
     ret = memcmp(ptr1, ptr2, len);
+
+    cout << "ptr1:\n";
+    for(int i = 0; i < len; i++) {
+        cout << std::hex << setw(3) << (int)ptr1[i];
+    }
+    cout << "\n\nptr2:\n";
+    for(int i = 0; i < len; i++) {
+        cout << std::hex << setw(3) << (int)ptr2[i];
+    }
+    cout << std::dec << endl;
     cout << "wl- memcmp : ret = " << ret << endl;
 
 

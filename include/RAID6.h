@@ -11,6 +11,8 @@ public:
     void generate_GF_table();
     int gf_mul(int a, int b);  // 伽罗华域乘法
     int gf_div(int a, int b);  // 伽罗华域除法，计算过程与乘法类似
+    uint8_t gf_pow(uint8_t exp);
+    uint8_t gf_miv(uint8_t i);
     int initRAID() override;
     int check_raid_state() override;
     int getstate() override;
@@ -34,7 +36,7 @@ public:
     void flag_init(bool *flag);
 
     int raid_disk_restore_by_P(DISKADDR *fail_disk_addr, char *restore_data);
-    int raid_disk_restore_by_Q(DISKADDR & fail_disk_addr, char *restore_data);
+    int raid_disk_restore_by_Q(DISKADDR *fail_disk_addr, char *restore_data);
 
     int all_data_restored(bool *flag);
     int count_known_datas(bool *falg,int i,int _layer,int fail_disk_no1,int fail_disk_no2,int except_disk_no);

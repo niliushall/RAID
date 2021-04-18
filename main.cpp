@@ -81,7 +81,7 @@ int main() {
     r->initRAID();
 
     Client c(r);
-    randomCheck(&c, 1, 2);
+    randomCheck(&c, 5, 2);
 
     system("pause");
     return 0;

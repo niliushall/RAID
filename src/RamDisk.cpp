@@ -67,6 +67,7 @@ int RamDisk::checkparam(int offset, void *buf, size_t count) {
 
 size_t RamDisk::read(int offset, void *buf, size_t count) {
     if (checkparam(offset, buf, count) == -1) {
+        cout << "RamDisk::read : param error...\n";
         return -1;
     } else {
         void *pos = (char *) space + offset;
