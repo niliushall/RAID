@@ -37,7 +37,7 @@ public:
 
     int raid_disk_restore_by_P(DISKADDR *fail_disk_addr, uint8_t *restore_data);
     int raid_disk_restore_by_Q(DISKADDR *fail_disk_addr, uint8_t *restore_data);
-    int raid_disk_restore_by_P_Q(DISKADDR *fail_disk_addr, uint8_t *restore_data);
+    int raid_disk_restore_by_P_Q(DISKADDR *fail_disk_addr, uint8_t *restore_data, int fail_disk_no1, int fail_disk_no2);
 
     int all_data_restored(bool *flag);
     int count_known_datas(bool *falg,int i,int _layer,int fail_disk_no1,int fail_disk_no2,int except_disk_no);

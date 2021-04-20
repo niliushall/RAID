@@ -125,7 +125,7 @@ int RAID::set_rand_disk_hung1() {
     int ret = SUCCESS;
     list<Disk *>::iterator it;
     int i;
-    for (it = disklist.begin(), i = 0; i < disklist.size() - 2; it++, i++) {
+    for (it = disklist.begin(), i = 0; i < disklist.size() - 3; it++, i++) {
     }
 
     cout << "hung disk : " << i << endl;

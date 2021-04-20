@@ -83,24 +83,22 @@ int Client::randomCheck(int no, int total, size_t capacity) {
     char buffer1[BUFSIZE] = {0}, buffer2[BUFSIZE] = {0};
 
     int offset = rand() % step;
-    cout << "wl- Client::randomCheck offset = " << offset << endl;
     int len = rand() % (step - offset);
-    cout << "wl- Client::randomCheck len = " << len << endl;
     offset = offset + step * no;
 
     if (len == 0) return 0;
 
     cout << no << " Check at " << target->getname() << ",offset(" << offset << ") size(" << len << ")!" << endl;
 
-    char* ptr1 = nullptr;
-    char* ptr2 = nullptr;
+    char *ptr1 = nullptr;
+    char *ptr2 = nullptr;
 
     if (len <= BUFSIZE) {
         ptr1 = buffer1;
         ptr2 = buffer2;
     } else {
-        ptr1 = (char*)malloc(len);
-        ptr2 = (char*)malloc(len);
+        ptr1 = (char *) malloc(len);
+        ptr2 = (char *) malloc(len);
         if ((ptr1 == nullptr) || (ptr2 == nullptr)) {
             cout << "Malloc failed." << endl;
             return -1;
@@ -110,26 +108,14 @@ int Client::randomCheck(int no, int total, size_t capacity) {
     memset(ptr1, 0, len);
     memset(ptr2, 0, len);
 
-    char* ptr = ptr1;
+    char *ptr = ptr1;
     for (int i = 0; i < len; i++)
         ptr[i] = rand() % 128;
 
     ret = read(offset, ptr2, len);
     ret = memcmp(ptr1, ptr2, len);
 
-    cout << "ptr1:\n";
-    for(int i = 0; i < len; i++) {
-        printf("%3x", (uint8_t)ptr1[i]);
-    }
-    cout << "\n\nptr2:\n";
-    for(int i = 0; i < len; i++) {
-        printf("%3x", (uint8_t)ptr2[i]);
-    }
-    cout << endl;
-    cout << "wl- memcmp : ret = " << ret << endl;
-
-
-//    system("pause");
+    cout << "memcmp : ret = " << ret << endl;
 
     if (ret != 0) {
         checkmemory(ptr1, ptr2, len, "Dismatch details:");
@@ -146,14 +132,11 @@ int Client::randomCheck(int no, int total, size_t capacity) {
 int Client::batchWrite(int time) {
     srand(seed);
     int capacity = target->getcapacity();
-    cout << "wl-target->getcapacity() : " << capacity << endl;
     int i;
-
 
     for (i = 0; i < time; i++) {
         if (-1 == randomWrite(i, time, capacity)) {
             cout << "Total write " << i << " times!" << endl;
-
             break;
         }
     }
