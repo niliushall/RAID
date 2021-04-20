@@ -1,8 +1,6 @@
 #include "RAID.h"
-//#include <bits/stl_algo.h>
 #include <cstring>
 #include "RAID6.h"
-//#define LFSR(c) ((( (c) << 1) ^ (((c) & 0x80) ? 0x1d : 0)) % 256)
 
 int getstate();
 
@@ -29,13 +27,6 @@ void RAID6::generate_GF_table() {
         GFILOG[i] = ILOG_data;
         GFLOG[GFILOG[i]] = i;
     }
-//    int c = 1;
-//    for(int i = 0; i < 256; i++)
-//    {
-//        GFILOG[i] = c;
-//        GFLOG[c] = i;
-//        c = LFSR(c);
-//    }
 }
 
 int RAID6::gf_mul(int a, int b) {
@@ -47,11 +38,6 @@ int RAID6::gf_mul(int a, int b) {
     }
 
     return GFILOG[(GFLOG[a] ^ GFLOG[b]) % 255];
-//    int sum = GFLOG[a] + GFLOG[b];
-//    if(sum >= 255) {
-//        sum -= 255;
-//    }
-//    return GFILOG[sum];
 }
 
 int RAID6::gf_div(int a, int b) {
@@ -65,18 +51,6 @@ int RAID6::gf_div(int a, int b) {
 
     return GFILOG[((GFLOG[a] ^ GFLOG[b]) + 255) % 255];
 }
-
-//int RAID6::gf_div(int a, int b) {
-//    if (a == 0 || b == 0) {
-//        return 0;
-//    }
-//    int sub = GFLOG[a] - GFLOG[b];
-//    if(sub < 0) {
-//        sub += 255;
-//    }
-//
-//    return GFILOG[sub];
-//}
 
 int RAID6::initRAID() {
     state = RAIDSTATE_NOTREADY;
@@ -401,43 +375,6 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                         }
                     }
 
-//                    for (size_t layer_no = 0;
-//                         layer_no < DISK_SIZE / SLIDESIZE; layer_no = layer_no + disklist.size() - 2) {
-//                        flag_init(layer_done);
-//                        while (all_data_restored(layer_done) == false) {
-//                            for (int i = 0; i < disklist.size() - 2; i++) {
-//                                fail_disk_count = count_known_datas(layer_done, i, layer_no, fail_disk_no1,
-//                                                                    fail_disk_no2, except_disk_no);
-//                                if (fail_disk_count == 2) {
-//                                } else if (fail_disk_count == 1) {
-//                                    ret = alloc_read_disk_data((size_t) (disklist.size() - 2) * SLIDESIZE, data_ptr);
-//
-//                                    ret = read_layer_data_for_inclined_check(layer_no, i, data_ptr, except_disk_no);
-//                                    ret = get_data_check_sum(data_ptr, (int) disklist.size() - 2, check_sum);
-//                                    ret = write_check_sum_for_inclined_check(layer_no + i, except_disk_no, check_sum);
-//
-//                                    //ret = alloc_read_disk_data((size_t) (disklist.size() - 2) * SLIDESIZE, data_ptr);
-//                                    if (except_disk_no == fail_disk_no1) {
-//                                        ret = read_layer_data(layer_no + i, data_ptr,
-//                                                              fail_disk_no2);    /*read one layer data*/
-//                                        ret = get_data_check_sum(data_ptr, (int) disklist.size() - 2, check_sum);
-//                                        ret = write_check_sum(layer_no + i, check_sum);
-//                                    } else if (except_disk_no == fail_disk_no2) {
-//                                        ret = read_layer_data(layer_no + i, data_ptr,
-//                                                              fail_disk_no1);    /*read one layer data*/
-//                                        ret = get_data_check_sum(data_ptr, (int) disklist.size() - 2, check_sum);
-//                                        ret = write_check_sum(layer_no + i, check_sum);
-//                                    }
-//                                    layer_done[i] = true;
-//                                    if (data_ptr) {
-//                                        free(data_ptr);
-//                                    }
-//
-//                                }
-//
-//                            }
-//                        }
-//                    }
                     /*循环结束后，数据恢复，将所有盘的状态都置为READY*/
                     list<Disk *>::iterator it;
                     for (it = disklist.begin(); it != disklist.end(); it++) {
@@ -695,10 +632,6 @@ void RAID6::calculate_check_sum_P(const uint8_t *char_list, int data_disk_num, u
 }
 
 void RAID6::calculate_check_sum_Q(const uint8_t *char_list, int data_disk_num, uint8_t &check_sum) {
-//    check_sum = 0;
-//    for(int i = 0; i < data_disk_num; i++) {
-//        check_sum = LFSR(check_sum ^ char_list[i]);
-//    }
     check_sum = 0;
     for (int i = 0; i < data_disk_num; i++) {
         check_sum ^= gf_mul(char_list[i], gfParameter[i]);

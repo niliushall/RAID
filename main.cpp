@@ -87,23 +87,6 @@ int main() {
     return 0;
 }
 
-/*
-int main() {
-    string file = "F:\\test.txt";
-    ifstream readfile(file, ios::in);
-    if(readfile.good()) {
-        cout << "文件存在\n";
-        readfile.close();
-    }
-
-    if(remove(file.c_str()) == 0) {
-        cout << "remove...\n";
-        return 0;
-    }
-    cout << "删除错误\n";
-}*/
-
-
 /*int main() {
     FileDisk disk[5];
     for(int i = 0; i < 5; i++) {

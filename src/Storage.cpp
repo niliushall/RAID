@@ -7,23 +7,19 @@ int Storage::count = 0;
 
 Storage::Storage() : type("Storage"), state(-1), capacity(0) {
     stringstream ss;
-    //cout<<type<<endl;
     ss << type << Storage::count++;
     ss >> name;//=type+random(1000)
 
     Storage::addStorage(this);
-
-    //ctor
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Storage::~Storage() {
     Storage::removeStorage(this);
     //dtor
 }
 
 void Storage::setstate(int s) {
-    if (isvalidstate(s))//ï¿½Ğ¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ğ§×´Ì¬
+    if (isvalidstate(s))
         state = s;
     else
         cout << "Try to set invalid state(" << s << ")" << getname();
