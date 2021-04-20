@@ -21,7 +21,8 @@ int checkmemory(void *buf1, void *buf2, size_t len, string s) {
     char *ptr1 = (char *) buf1, *ptr2 = (char *) buf2;
     for (size_t i = 0; i < len; i++) {
         ret = (ptr1[i] == ptr2[i]) ? "" : " dismatch";
-        cout << i << "      " << "v1:" << hex << (int) ptr1[i] << "      v2:" << hex << (int) ptr2[i] << ret << endl;
+        printf("%d   v1:%3x, v2:%3x  %s\n", i, (uint8_t) ptr1[i], (uint8_t) ptr2[i], ret.c_str());
+//        cout << i << "      " << "v1:" << hex << (uint8_t) ptr1[i] << "      v2:" << hex << (uint8_t) ptr2[i] << ret << endl;
     }
     return 0;
 }
@@ -37,7 +38,7 @@ int Client::read(int offset, void *buf, size_t len) {
 
 int Client::write(int offset, void *buf, size_t len) {
     int ret = target->write(offset, buf, (size_t) len);
-    cout << "***** ret is " << ret << endl;
+    cout << "***** ret is " << ret << "\n\n";
 
     if (-1 == ret) {
         cout << "Write to " << target->getname() << " failed.offset(" << offset << "),len(" << len << ")!" << endl;
@@ -118,17 +119,17 @@ int Client::randomCheck(int no, int total, size_t capacity) {
 
     cout << "ptr1:\n";
     for(int i = 0; i < len; i++) {
-        cout << std::hex << setw(3) << (int)ptr1[i];
+        printf("%3x", (uint8_t)ptr1[i]);
     }
     cout << "\n\nptr2:\n";
     for(int i = 0; i < len; i++) {
-        cout << std::hex << setw(3) << (int)ptr2[i];
+        printf("%3x", (uint8_t)ptr2[i]);
     }
-    cout << std::dec << endl;
+    cout << endl;
     cout << "wl- memcmp : ret = " << ret << endl;
 
 
-    system("pause");
+//    system("pause");
 
     if (ret != 0) {
         checkmemory(ptr1, ptr2, len, "Dismatch details:");

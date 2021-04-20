@@ -21,22 +21,23 @@ public:
 
     int addressMapping(int offset, size_t count);
     int write_check_sum_disk(list<DISKADDR> & addrlist);
-    int alloc_read_disk_data(size_t size,char * &ptr);
-    int read_layer_data(int layno, char *data_ptr,int except_disk_no=-1);
-    int read_layer_data_for_inclined_check(int layno,int disk_no,char *data_ptr,int except_disk_no);
+    int alloc_read_disk_data(size_t size,uint8_t * &ptr);
+    int read_layer_data(int layno, uint8_t *data_ptr,int except_disk_no=-1);
+    int read_layer_data_for_inclined_check(int layno,int disk_no,uint8_t *data_ptr,int except_disk_no);
 
-    int read_layer_data_for_check(int layno,char *data_ptr);
+    int read_layer_data_for_check(int layno,uint8_t *data_ptr);
     // int read_layer_data_for_checkQ(int layno, char *data_ptr,int except_disk_no=-1);
-    int get_data_check_sum(const char *data_ptr,int data_disk_num,char* check_sum_P, char* check_sum_Q);
-    static void calculate_check_sum_P(const char *char_list,int data_disk_num,char &check_sum);
-    void calculate_check_sum_Q(const char *char_list,int data_disk_num,char &check_sum);
-    int write_check_sum(int layerno, int diskno, char *check_sum);
-    int write_check_sum_for_inclined_check(int layerno,int disk_no, char *check_sum);
+    int get_data_check_sum(const uint8_t *data_ptr,int data_disk_num,uint8_t* check_sum_P, uint8_t* check_sum_Q);
+    static void calculate_check_sum_P(const uint8_t *char_list,int data_disk_num,uint8_t &check_sum);
+    void calculate_check_sum_Q(const uint8_t *char_list,int data_disk_num,uint8_t &check_sum);
+    int write_check_sum(int layerno, int diskno, uint8_t *check_sum);
+    int write_check_sum_for_inclined_check(int layerno,int disk_no, uint8_t *check_sum);
 
     void flag_init(bool *flag);
 
-    int raid_disk_restore_by_P(DISKADDR *fail_disk_addr, char *restore_data);
-    int raid_disk_restore_by_Q(DISKADDR *fail_disk_addr, char *restore_data);
+    int raid_disk_restore_by_P(DISKADDR *fail_disk_addr, uint8_t *restore_data);
+    int raid_disk_restore_by_Q(DISKADDR *fail_disk_addr, uint8_t *restore_data);
+    int raid_disk_restore_by_P_Q(DISKADDR *fail_disk_addr, uint8_t *restore_data);
 
     int all_data_restored(bool *flag);
     int count_known_datas(bool *falg,int i,int _layer,int fail_disk_no1,int fail_disk_no2,int except_disk_no);
