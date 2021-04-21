@@ -36,7 +36,6 @@ int RAID6::gf_mul(int a, int b) {
     if (b == 0) {
         return a;
     }
-
     return GFILOG[(GFLOG[a] ^ GFLOG[b]) % 255];
 }
 
@@ -378,10 +377,8 @@ size_t RAID6::operatedisk(void *buf, int opflag, list<DISKADDR> &diskaddrlist) {
                     /*循环结束后，数据恢复，将所有盘的状态都置为READY*/
                     list<Disk *>::iterator it;
                     for (it = disklist.begin(); it != disklist.end(); it++) {
-                        cout << 11 << endl;
                         if ((*it)->getstate() == DISKSTATE_HUNG) //确保被hung 的是正常的disk
                         {
-                            cout << 11 << endl;
                             (*it)->setstate(DISKSTATE_READY);
                         }
                     }
@@ -770,29 +767,31 @@ int RAID6::raid_disk_restore_by_P_Q(DISKADDR *fail_disk_addr, uint8_t *restore_d
     int fail_disk_no = fail_disk_addr->diskno;
     uint8_t *data_ptr = nullptr, *data_P = nullptr, *data_Q = nullptr;
 
-    if (alloc_read_disk_data((size_t) SLIDESIZE * (disklist.size() - 3), data_ptr) != SUCCESS) {
+    if (alloc_read_disk_data((size_t) SLIDESIZE * (disklist.size() - 4), data_ptr) != SUCCESS) {
         return ERR;
     }
-    if (alloc_read_disk_data((size_t) SLIDESIZE * (disklist.size() - 3), data_P) != SUCCESS) {
+    if (alloc_read_disk_data((size_t) SLIDESIZE, data_P) != SUCCESS) {
         return ERR;
     }
-    if (alloc_read_disk_data((size_t) SLIDESIZE * (disklist.size() - 3), data_Q) != SUCCESS) {
+    if (alloc_read_disk_data((size_t) SLIDESIZE, data_Q) != SUCCESS) {
         return ERR;
     }
 
     // 获取未损坏数据盘的数据
     for(int i = 0; i < disklist.size() - 2; i++) {
-        if(i != fail_disk_no1 && i != fail_disk_no2) {
+        if((i != fail_disk_no1) && (i != fail_disk_no2)) {
             disk_addr.diskno = i;
             disk_addr.layerno = layerNo;
             disk_addr.len = SLIDESIZE;
             disk_addr.offset = SLIDESIZE * layerNo;
             disk_addr_list.push_back(disk_addr);
             diskNo.push_back(i);
+            cout << "disk_addr : " << disk_addr.diskno << ", " << disk_addr.layerno << ", " << disk_addr.offset << endl;
         }
     }
+
     size_t data_size = operatedisk(data_ptr, OP_READ_REBUILD, disk_addr_list);
-    if(data_size != SLIDESIZE * (disklist.size() - 3)) {
+    if(data_size != SLIDESIZE * (disklist.size() - 4)) {
         cout << "restore by P & Q, operatedisk(data_ptr) error..." << endl;
         return ERR;
     }
@@ -829,9 +828,9 @@ int RAID6::raid_disk_restore_by_P_Q(DISKADDR *fail_disk_addr, uint8_t *restore_d
     int another_faildisk_parameter = (fail_disk_no == fail_disk_no1) ? gfParameter[fail_disk_no2] : gfParameter[fail_disk_no1];
     for(int i = 0; i < SLIDESIZE; i++) {
         restore_data[i] = data_Q[i];
-        for(int j = 0; j < disklist.size() - 2; j++) {
+        for(int j = 0; j < diskNo.size(); j++) {
             restore_data[i] ^= gf_mul(data_ptr[SLIDESIZE * j + i], gfParameter[diskNo[j]]);
-            restore_data[i] ^= gf_mul(data_ptr[SLIDESIZE * j + i], gfParameter[another_faildisk_parameter]);
+            restore_data[i] ^= gf_mul(data_ptr[SLIDESIZE * j + i], another_faildisk_parameter);
         }
         restore_data[i] ^= gf_mul(data_P[i], another_faildisk_parameter);
         restore_data[i] = gf_div(restore_data[i], gfParameter[fail_disk_no1] ^ gfParameter[fail_disk_no2]);
