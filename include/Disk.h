@@ -6,8 +6,8 @@
 
 #define DISK_SIZE 10240
 
-#define DISKSTATE_STARTFLAG       0    /*had not alloc the memery */
-#define DISKSTATE_NOTREADY        1   /*had alloc the memery */
+#define DISKSTATE_STARTFLAG       0    // had not alloc the memory
+#define DISKSTATE_NOTREADY        1    // had alloc the memory
 #define DISKSTATE_READY           2
 #define DISKSTATE_FAILED          3
 #define DISKSTATE_HUNG            4
@@ -27,7 +27,7 @@ public:
     void setstate(int s);
 
 protected:
-    size_t disk_capacity;   // 单个磁盘容量
+    size_t disk_capacity;   // capacity of single disk
     RAID *group;
 
     static int count;

@@ -21,49 +21,48 @@ using namespace std;
 #define  SUCCESS 0
 #define  ERR  -1
 
-
-
 /*
  * 抽象的存储资源类，提供读写功能，具体过程由RAID和Disk类实现
  */
 
 class Storage
 {
-    public:
-        Storage();
-        virtual ~Storage();
-        virtual bool isvalidstate(int s);
-        void setstate(int s);
+public:
+    Storage();
+    virtual ~Storage();
+    virtual bool isvalidstate(int s);
 
-        int getstate() {return state;}
-        string getname(){return name;}
-        string gettype() {return type;}
+    virtual void setstate(int s);
 
-        virtual size_t getcapacity() {return capacity;} // 获取单个磁盘的容量,需要修改
+    int getstate() {return state;}
+    string getname(){return name;}
+    string gettype() {return type;}
 
-        virtual size_t read(int offset, void *buf, size_t count);
-        virtual size_t write(int offset, void *buf, size_t count);
-        virtual int initialize() {return getstate();}
-        virtual  int get_disk_size();
-        virtual int set_rand_disk_hung();
-        virtual int set_rand_disk_hung1();
+    virtual size_t getcapacity() {return capacity;} // get total capacity of all disks
+
+    virtual size_t read(int offset, void *buf, size_t count);
+    virtual size_t write(int offset, void *buf, size_t count);
+    virtual int initialize() {return getstate();}
+    virtual  int get_disk_size();
+    virtual int set_rand_disk_hung();
+    virtual int set_rand_disk_hung1();
 
 
-        void printinfo(int tab=1);
-        virtual void  pritinfo();
+    void printinfo(int tab=1);
+    virtual void  pritinfo();
 
-        static int getStoreageList(list<Storage *> nl);
-        static int addStorage(Storage *s);
-        static int printStorageList();
-        static int removeStorage(Storage *s);
+    static int getStoreageList(list<Storage *> nl);
+    static int addStorage(Storage *s);
+    static int printStorageList();
+    static int removeStorage(Storage *s);
 
-    protected:
-        string type;
-        int state;
-        size_t capacity;	/*capacity of all disk(don't include chechsum space)*/
-        string name;
-        static int count;
-        static list<Storage *> store;
+protected:
+    string type;
+    int state;
+    size_t capacity;	// capacity of all disks(exclude chechsum space)
+    string name;
+    static int count;
+    static list<Storage *> store;
 };
 
 typedef list<Storage *> STORAGELIST;

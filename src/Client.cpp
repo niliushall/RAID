@@ -41,7 +41,6 @@ int Client::write(int offset, void *buf, size_t len) {
 
     if (-1 == ret) {
         cout << "Write to " << target->getname() << " failed.offset(" << offset << "),len(" << len << ")!" << endl;
-
     }
     return ret;
 }

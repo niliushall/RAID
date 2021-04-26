@@ -9,8 +9,8 @@ public:
     RAID6();
     ~RAID6();
     void generate_GF_table();
-    int gf_mul(int a, int b);  // 伽罗华域乘法
-    int gf_div(int a, int b);  // 伽罗华域除法，计算过程与乘法类似
+    int gf_mul(int a, int b);  // multiplication of Galois Field
+    int gf_div(int a, int b);  // division of Galois Field
     uint8_t gf_pow(uint8_t exp);
     uint8_t gf_miv(uint8_t i);
     int initRAID() override;
@@ -52,11 +52,10 @@ protected:
     size_t operatedisk( void *buf,int opflag,list<DISKADDR>& diskaddrlist);
 
 private:
-    int GFLOG[256];     // 伽罗华域正对数表
-    int GFILOG[256];    // 伽罗华域反对数表
+    int GFLOG[256];     // the positive logarithm table of Galois Field
+    int GFILOG[256];    // the antilog table of Galois Field
     vector<int> gfParameter;
 };
-
 
 #endif // RAID6_H
 

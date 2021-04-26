@@ -16,7 +16,7 @@ public:
 private:
     static const string basedir;
     static int disk_count;
-    void* space;        // 文件（磁盘）起始地址
+    void* space;        // initial address of disk
 
 private:
     int checkparam(int offset, void* buf, size_t count);

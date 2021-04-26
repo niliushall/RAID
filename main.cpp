@@ -65,7 +65,7 @@ int randomCheck(Client *c, int checktime, int hung_disk_num) {
 }
 
 
-int main() {
+/*int main() {
     int level = 0;
     int disk_num = 5;
 
@@ -85,9 +85,9 @@ int main() {
 
     system("pause");
     return 0;
-}
+}*/
 
-/*int main() {
+int main() {
     FileDisk disk[5];
     for(int i = 0; i < 5; i++) {
         disk[i].initDisk();
@@ -105,4 +105,4 @@ int main() {
     system("pause");
 
     return 0;
-}*/
+}

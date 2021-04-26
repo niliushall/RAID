@@ -14,7 +14,7 @@ FileDisk::~FileDisk() {
     ifstream readfile(name);
     if(readfile.good()) {
         readfile.close();
-        // remove(name.c_str());    // 析构函数中删除磁盘文件
+        // remove(name.c_str());
     }
 }
 
@@ -59,7 +59,8 @@ size_t FileDisk::read(int offset, void *buf, size_t count) {
     ifstream file_reader(name, ios::in | ios::binary);
     if(file_reader.is_open()) {
         file_reader.seekg(offset, ios::beg);
-        file_reader.read(static_cast<char *>(buf), count);
+        file_reader.read((char *)buf, count);
+        file_reader.close();
     }
     return count;
 }
@@ -69,10 +70,11 @@ size_t FileDisk::write(int offset, void *buf, size_t count) {
         return -1;
     }
 
-    ofstream file_writer(name, ios::out | ios::binary);
+    ofstream file_writer(name, ios::out | ios::binary | ios::in);
     if(file_writer.is_open()) {
         file_writer.seekp(offset, ios::beg);
         file_writer.write(static_cast<char *>(buf), count);
+        file_writer.close();
     }
     return count;
 }
@@ -100,5 +102,3 @@ int FileDisk::checkparam(int offset, void *buf, size_t count) {
 
     return 0;
 }
-
-

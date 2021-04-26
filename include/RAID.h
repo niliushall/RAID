@@ -50,8 +50,8 @@ public:
 
 protected:
     static int count;
-    list<Disk *> disklist;   /*rRAID disk list */
-    vector<int> fail_disks;   /* state is failed  disk id list*/
+    list<Disk *> disklist;   // RAID disks
+    vector<int> fail_disks;   // failed disks` ID
 };
 
 #endif // RAID_H

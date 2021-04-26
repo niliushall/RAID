@@ -12,7 +12,7 @@ public:
     size_t write(int offset, void *buf, size_t count) override;
     bool emptyDisk() override;
 
-    void *space;  //the address of  disk
+    void *space;  //the initial address of disk
 
 protected:
     static int count;

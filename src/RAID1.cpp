@@ -192,4 +192,3 @@ size_t RAID1::write(int offset, void *buf, size_t count) {
 size_t RAID1::read(int offset, void *buf, size_t count) {
     return operate(offset, buf, count, OP_READ);
 }
-//read/write(RAID)->operate->operatedisk->read/write(disk)     operate->addressmapping

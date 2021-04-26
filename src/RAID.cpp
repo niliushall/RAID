@@ -110,13 +110,6 @@ int RAID::printDiskList() {
     return 0;
 }
 
-
-//int RAID::initRAID()
-//{
-//  return 0;
-//}
-
-
 int RAID::rebuildRAID() {
     return 0;
 }
@@ -144,7 +137,7 @@ int RAID::set_rand_disk_hung() {
         count = 0;
         diskno = rand() % (int) disklist.size();
         for (it = disklist.begin(); it != disklist.end(); it++) {
-            if (count == diskno && (*it)->getstate() == DISKSTATE_READY) //确保被hung 的是正常的disk
+            if (count == diskno && (*it)->getstate() == DISKSTATE_READY) // ensure suspend the correct disk
             {
                 cout << "hung disk : " << diskno << endl;
                 (*it)->setstate(DISKSTATE_HUNG);
